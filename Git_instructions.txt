@@ -86,3 +86,10 @@ git reflog  //该指令记录了每一次命令
 关联后，使用命令git push -u origin master第一次推送master分支的所有内容；
 
 此后，每次本地提交后，只要有必要，就可以使用命令git push origin master推送最新修改；
+
+克隆远程仓库
+例：我们先在github上新建了一个仓库gitskills，有一个README文件，现在要把这个仓库克隆到本地
+比如我现在想把这个gitskills仓库克隆到E盘computer_courses这个文件夹，就先让git管理这个文件夹，
+然后执行克隆命令
+git clone 该仓库的地址
+就可以了
