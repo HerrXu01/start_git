@@ -93,3 +93,7 @@ git reflog  //该指令记录了每一次命令
 然后执行克隆命令
 git clone 该仓库的地址
 就可以了
+
+有时候会遇到报错 OpenSSL SSL_read: Connection was reset, errno 10054
+可以输入以下命令
+git config --global http.sslVerify "false"
