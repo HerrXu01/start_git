@@ -94,6 +94,12 @@ git reflog  //该指令记录了每一次命令
 git clone 该仓库的地址
 就可以了
 
+如果你想在克隆远程仓库的时候，自定义本地仓库的名字，你可以通过额外的参数指定新的目录名：
+git clone 地址 新的目录名
+
 有时候会遇到报错 OpenSSL SSL_read: Connection was reset, errno 10054
 可以输入以下命令
 git config --global http.sslVerify "false"
+
+git bash返回上一级目录
+cd ..\
