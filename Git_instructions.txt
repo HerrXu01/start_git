@@ -137,3 +137,36 @@ git config --global http.sslVerify "false"
 
 git bash返回上一级目录
 cd ..\
+
+
+分支相关命令
+
+查看分支 git branch 
+此命令会列出所有分支，并在当前分支前面加上*
+
+创建分支 git branch name
+比如 git branch dev 
+创建了一个名为dev的分支
+
+切换分支
+git checkout name 或 git switch name
+将HEAD指针指向所要切换到的分支
+
+创建+切换分支
+git checkout -b name 或 git switch -c name
+将以上的两步合成一步
+
+每次提交，Git会将它们串成一条时间线，到目前，只有一条时间线，这个分支就叫主分支，即master分支
+HEAD指向master, master指向最新的提交，HEAD就表示当前
+每次提交，master都会向前移动，
+当我们创建新的分支，例如dev时，Git新建了一个指针叫dev，指向master相同的提交，
+然后我们再把HEAD指向dev（即切换到dev），就表示当前分支在dev上，
+在dev分支上，我们对文件进行修改，并进行新的提交，dev指针就会向前移动，而master指针保持不动，
+当我们切换回master指针时，发现文件里在dev分支上做的添加或者改动都没了，文件还是master指针指向的提交时的样子，
+
+如果我们在dev上的工作完成了，我们可以将dev上的工作合并到master上，
+git merge dev
+我们在dev分支上工作好了，回到了master分支上，用以上命令可将所指定的分支(dev)合并到我们当前的分支上(master)
+
+最后可以将dev分支删除，只留下一条master分支
+git branch -d name
