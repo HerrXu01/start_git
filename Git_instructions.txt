@@ -87,6 +87,40 @@ git reflog  //该指令记录了每一次命令
 
 此后，每次本地提交后，只要有必要，就可以使用命令git push origin master推送最新修改；
 
+添加远程仓库
+运行 git remote add <shortname> <url> 添加一个新的远程 Git 仓库，同时指定一个方便使用的简写，这个简写就是该远程仓库在本地保存的一个
+简称，以后传输的时候就不用输网址了，比如需要push的时候，直接运行 git push origin master, 或者 git push <shortname> master
+当然直接在push后面加网址也可以，但很麻烦
+shortname 该简称默认的是origin, 当然也可以自己来命名
+//修改简称
+如果添加了多个远程仓库，origin, sk, t1, 等等，这个时候感觉t1这个简称过于简略，想把这个简称改成test1，可运行
+git remote rename t1 test1
+然后git remote 看看是否修改成功
+//
+url可以是网址https://开头的，也可以是git@server-name:path/repo-name.git, 比如git@github.com:HerrXu01/for_test_1.git
+前者是https协议，后者是ssh协议，后者传输更快一些
+//修改协议
+如果一开始添加仓库的时候，URL用的是https，现在想换成ssh协议的
+比如添加了一个远程仓库1，简称是origin，运行以下指令
+git remote rm origin
+git remote add origin git@github.com:HerrXu01/for_test_1.git
+git push -u origin master
+//
+
+一个本地仓库可以添加多个远程仓库
+这时候要注意在添加的时候，上述的简称要区分开；
+一个本地仓库与多个远程仓库关联之后，可以运行 git remote 指令来查看所有已关联的远程仓库的简称
+git remote -v 可以显示出仓库的简称和对应的URL
+
+修改远程仓库的名称
+在github上打开该仓库，点击settings，就可以直接改名称了
+如果所修改的这个远程仓库之前就已经与某些本地仓库关联了的话，改完远程仓库的名称之后，还要重新进行关联；
+比如我的远程仓库for_test重命名成了for_test_1，原先远程仓库for_test与本地仓库git_test_1关联的，但这时候因为
+远程仓库重命名导致路径不对了，所以要重新设置URL
+git remote set-url origin 新的URL
+注：这里for_test在本地保存的简称是origin，如果简称不是origin，则要用之前保存的简称；
+改完之后，可以运行git remote -v看一下
+
 克隆远程仓库
 例：我们先在github上新建了一个仓库gitskills，有一个README文件，现在要把这个仓库克隆到本地
 比如我现在想把这个gitskills仓库克隆到E盘computer_courses这个文件夹，就先让git管理这个文件夹，
