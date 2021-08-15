@@ -137,6 +137,7 @@ git config --global http.sslVerify "false"
 
 git bash返回上一级目录
 cd ..\
+两次回车
 
 
 分支相关命令
@@ -170,3 +171,90 @@ git merge dev
 
 最后可以将dev分支删除，只留下一条master分支
 git branch -d name
+
+
+当Git无法自动合并分支时，就必须首先解决冲突。解决冲突后，再提交，合并完成。
+解决冲突就是把Git合并失败的文件手动编辑为我们希望的内容，再提交。
+
+
+通常，合并分支时，如果可能，Git会用Fast forward模式，但这种模式下，删除分支后，会丢掉分支信息。
+如果要强制禁用Fast forward模式，Git就会在merge时生成一个新的commit，这样，从分支历史上就可以看出分支信息。
+git merge --no-ff -m "message" dev(分支名)
+以上命令可以强制禁用fast forward模式，但会增加一个新的注释，所以需要加上-m "message"
+
+可以用以下命令来查看历史
+git log --graph --pretty=oneline --abbrev-commit
+如果合并的时候是fast forward模式，那么在删除分支之后，用以上命令查看历史就没有这个分支的记录；
+如果禁用了ff模式，就会有记录
+
+在实际开发中，我们应该按照几个基本原则进行分支管理：
+首先，master分支应该是非常稳定的，也就是仅用来发布新版本，平时不能在上面干活；
+那在哪干活呢？干活都在dev分支上，也就是说，dev分支是不稳定的，到某个时候，比如1.0版本发布时，再把dev分支合并到master上，
+在master分支发布1.0版本；
+你和你的小伙伴们每个人都在dev分支上干活，每个人都有自己的分支，时不时地往dev分支上合并就可以了。
+
+
+
+bug分支
+这里我们通过一个极其简单的示例来介绍当我们在开发过程中突然遇到一个紧急的bug的处理过程
+//
+我们在git_test_1文件夹里的test2.txt进行开发工作，这里我们现在该文件里写一句
+Here is a bug.
+这一句话我们就当做是一个bug，然后需要修正它，修正的方法就在后面再加上一句话
+Here is a bug, but I have fixed it.
+这样就当做bug被修复了。
+这个bug是一个突然发生的状况，我们原本在该文件里（dev分支）做开发工作，我们先是敲了一句
+I am developing a program.
+但这时候遇到了上面说的bug，需要赶紧修改，但手头的开发工作还未做完，还需要再敲一句
+I have finished all the work.
+当作完成手头的工作，才可以提交。
+这个时候我们需要将当前工作现场“储藏”起来，等以后恢复现场后继续工作
+
+git stash //将当前工作储藏
+
+首先确定要在哪个分支上修复bug，假定需要在master分支上修复，就从master创建临时分支
+
+git switch master //先回到master分支上
+
+git switch -c debug-1  //在master那个位置创建了一个新的名为debug-1的分支，并转到了那个分支
+
+然后我们在debug-1这个分支上进行修改，如上所述，我们加了一句but I have fixed it.
+这样，我们就算是把这个bug修正过来了，之后添加并提交，再回到master分支，进行合并
+
+git merge --no-ff -m "merged bug fix 1" debug-1 //注意禁用fast forward模式
+
+git branch -d debug-1    //然后删除debug-1分支
+
+现在master上的bug已经被修改了，我们需要回到dev继续我们之前的工作
+
+git switch dev  //回到dev分支
+
+这个时候可以git status看一下，工作树是干净的，因为之前的工作被储藏起来了
+
+git stash list  //查看工作现场
+
+现在需要将工作现场恢复，有两个方法
+1. 用git stash apply恢复，但是恢复后，stash内容并不删除，你需要用git stash drop来删除；
+2. 用git stash pop，恢复的同时把stash内容也删了；
+
+可以多次stash，恢复的时候，先用git stash list查看，然后恢复指定的stash，用命令：
+git stash apply stash@{0}
+
+在master分支上修复了bug后，我们要想一想，dev分支是早期从master分支分出来的，所以，这个bug其实在当前dev分支上也存在。
+那怎么在dev分支上修复同样的bug？
+
+同样的bug，要在dev上修复，我们只需要把刚刚在debug-1分支上所做的修改“复制”到dev分支。
+我们在debug-1分支上修改完bug后，进行了一次提交，那次提交会有一个commit id
+在一个方括号里[]，跟在debug-1的后面，我现在这里的id是  0fc990d
+注意：我们只想复制0fc990d这个提交所做的修改，并不是把整个master分支merge过来。
+
+为了方便操作，Git专门提供了一个cherry-pick命令，让我们能复制一个特定的提交到当前分支
+在这之前，我们需要将当前的工作进行一次提交，
+git commit -m "..."
+之后才能将修改复制过来，
+git cherry-pick 0fc990d
+
+复制过来之后，再加上一句
+I have finished all the work.  当作完成当前工作，之后添加提交。
+
+再完成所有的开发工作之后，将dev上的工作合并到master上，删除dev分支
